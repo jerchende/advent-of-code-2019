@@ -1,7 +1,7 @@
 # Advent Of Code 2021 Solutions
 
 [![Tests](https://github.com/jerchende/advent-of-code-2019/workflows/Tests/badge.svg?branch=master)](https://github.com/jerchende/advent-of-code-2019/actions?query=workflow%3ATests)
-[![](https://img.shields.io/badge/stars%20⭐-6-yellow)](https://adventofcode.com/2019)
+[![](https://img.shields.io/badge/stars%20⭐-8-yellow)](https://adventofcode.com/2019)
 
 Here are my solutions for the Advent of Code [Advent of Code](https://adventofcode.com/2019). Implemented with Java 17 and Junit 5.
 
