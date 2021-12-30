@@ -36,7 +36,7 @@ public class SpaceImage {
         return layers().min(Comparator.comparingInt(i -> countPixel(i, 0))).map(i -> countPixel(i, 1) * countPixel(i, 2)).orElseThrow();
     }
 
-    public int countPixel(int[] input, int countPixel) {
+    private static int countPixel(int[] input, int countPixel) {
         return (int) Arrays.stream(input).filter(i -> i == countPixel).count();
     }
 
