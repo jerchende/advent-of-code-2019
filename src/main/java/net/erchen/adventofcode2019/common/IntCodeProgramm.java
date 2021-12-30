@@ -84,12 +84,13 @@ public class IntCodeProgramm {
     }
 
     private long parameter(long instructionPointer, int parameterOffset) {
-        var immediateMode = (readMemory(instructionPointer) % tenPow(parameterOffset + 2)) >= tenPow(parameterOffset + 1);
-        if (immediateMode) {
-            return readMemory(instructionPointer + parameterOffset);
-        } else {
-            return readMemory(readMemory(instructionPointer + parameterOffset));
-        }
+        var parameterMode = (int) Math.floorDiv(readMemory(instructionPointer), tenPow(parameterOffset + 1)) % 10;
+        return switch (parameterMode) {
+            case 0 -> readMemory(readMemory(instructionPointer + parameterOffset));
+            case 1 -> readMemory(instructionPointer + parameterOffset);
+            case 2 -> readMemory(relativeBase.get() + readMemory(instructionPointer + parameterOffset));
+            default -> throw new IllegalStateException("Unexpected parameter mode: " + parameterMode);
+        };
     }
 
     private static int tenPow(long exponent) {
