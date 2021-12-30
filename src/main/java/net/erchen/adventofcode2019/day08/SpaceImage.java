@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -41,24 +42,14 @@ public class SpaceImage {
     }
 
     public String toString() {
-        var sb = new StringBuilder();
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                layer:
-                for (int layer = 0; layer < layerCount; layer++) {
-                    switch (image[layer * layerSize + y * width + x]) {
-                    case 0:
-                        sb.append("⬛️");
-                        break layer;
-                    case 1:
-                        sb.append("⬜️");
-                        break layer;
-                    }
-                }
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
+        return IntStream.range(0, height).boxed().map(y ->
+                IntStream.range(0, width).boxed().map(x ->
+                        IntStream.range(0, layerCount).map(layer -> image[layer * layerSize + y * width + x])
+                                .filter(pixel -> pixel != 2)
+                                .mapToObj(pixel -> pixel == 0 ? "⬛️" : "⬜️")
+                                .findFirst()
+                                .orElse("🟦")
+                ).collect(Collectors.joining())
+        ).collect(Collectors.joining("\n"));
     }
 }
