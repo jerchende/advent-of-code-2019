@@ -1,37 +1,19 @@
 package net.erchen.adventofcode2019.day02;
 
 import lombok.SneakyThrows;
+import net.erchen.adventofcode2019.common.IntCodeProgramm;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IntCodeProgrammTest {
+class GravityAssistTest {
 
     @SneakyThrows
     static String solutionInput() {
         return Files.readAllLines(Path.of("src/test/resources/day02/input.txt")).get(0);
-    }
-
-    @ParameterizedTest
-    @CsvSource(delimiterString = "#", value = {
-            "1,9,10,3,2,3,11,0,99,30,40,50#3500,9,10,70,2,3,11,0,99,30,40,50",
-            "1,0,0,0,99#2,0,0,0,99",
-            "2,3,0,3,99#2,3,0,6,99",
-            "2,4,4,5,99,0#2,4,4,5,99,9801",
-            "1,1,1,4,99,5,6,0,99#30,1,1,4,2,5,6,0,99"
-
-    })
-    void shouldRunProgramm(String input, String output) {
-        var intCodeProgramm = IntCodeProgramm.fromInput(input);
-
-        intCodeProgramm.execute();
-
-        assertThat(intCodeProgramm.toString()).isEqualTo(output);
     }
 
     @Test
@@ -40,7 +22,8 @@ class IntCodeProgrammTest {
         intCodeProgramm.getProgram()[1] = 12;
         intCodeProgramm.getProgram()[2] = 2;
 
-        intCodeProgramm.execute();
+        intCodeProgramm.execute(() -> null, x -> {
+        });
         assertThat(intCodeProgramm.getProgram()[0]).isEqualTo(6327510);
     }
 
@@ -51,7 +34,8 @@ class IntCodeProgrammTest {
                 var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
                 intCodeProgramm.getProgram()[1] = noun;
                 intCodeProgramm.getProgram()[2] = verb;
-                intCodeProgramm.execute();
+                intCodeProgramm.execute(() -> null, x -> {
+                });
                 if (intCodeProgramm.getProgram()[0] == 19690720) {
                     assertThat(noun).isEqualTo(41);
                     assertThat(verb).isEqualTo(12);

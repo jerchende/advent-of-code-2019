@@ -1,6 +1,7 @@
 package net.erchen.adventofcode2019.day07;
 
 import lombok.SneakyThrows;
+import net.erchen.adventofcode2019.common.IntCodeProgramm;
 
 import java.util.LinkedList;
 import java.util.List;

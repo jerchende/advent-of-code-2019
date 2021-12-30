@@ -1,12 +1,13 @@
-package net.erchen.adventofcode2019.day05;
+package net.erchen.adventofcode2019.common;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
 
@@ -24,9 +25,8 @@ public class IntCodeProgramm {
         return Arrays.stream(program).mapToObj(String::valueOf).collect(joining(","));
     }
 
-    public List<Integer> execute(List<Integer> input) {
-        var output = new LinkedList<Integer>();
-        int inputPointer = 0;
+    @SneakyThrows
+    public void execute(Supplier<Integer> input, Consumer<Integer> output) {
         for (int i = 0; i < program.length; ) {
             var operator = program[i] % 100;
             if (operator == 1) {
@@ -36,10 +36,10 @@ public class IntCodeProgramm {
                 program[program[i + 3]] = parameter(i, 1) * parameter(i, 2);
                 i += 4;
             } else if (operator == 3) {
-                program[program[i + 1]] = input.get(inputPointer++);
+                program[program[i + 1]] = input.get();
                 i += 2;
             } else if (operator == 4) {
-                output.add(parameter(i, 1));
+                output.accept(parameter(i, 1));
                 i += 2;
             } else if (operator == 5) {
                 if (parameter(i, 1) != 0) {
@@ -65,7 +65,6 @@ public class IntCodeProgramm {
                 throw new IllegalStateException("Unknown operator: " + operator);
             }
         }
-        return output;
     }
 
     private int parameter(int instructionPointer, int parameterOffset) {
