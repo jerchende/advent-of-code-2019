@@ -43,37 +43,37 @@ public class IntCodeProgramm {
         while (true) {
             var operator = program.get(instructionPointer) % 100;
             if (operator == 1) {
-                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) + parameter(instructionPointer, 2));
+                writeParameter(instructionPointer, 3, readParameter(instructionPointer, 1) + readParameter(instructionPointer, 2));
                 instructionPointer += 4;
             } else if (operator == 2) {
-                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) * parameter(instructionPointer, 2));
+                writeParameter(instructionPointer, 3, readParameter(instructionPointer, 1) * readParameter(instructionPointer, 2));
                 instructionPointer += 4;
             } else if (operator == 3) {
-                program.put(program.get(instructionPointer + 1), input.get());
+                writeParameter(instructionPointer, 1, input.get());
                 instructionPointer += 2;
             } else if (operator == 4) {
-                output.accept(parameter(instructionPointer, 1));
+                output.accept(readParameter(instructionPointer, 1));
                 instructionPointer += 2;
             } else if (operator == 5) {
-                if (parameter(instructionPointer, 1) != 0) {
-                    instructionPointer = parameter(instructionPointer, 2);
+                if (readParameter(instructionPointer, 1) != 0) {
+                    instructionPointer = readParameter(instructionPointer, 2);
                 } else {
                     instructionPointer += 3;
                 }
             } else if (operator == 6) {
-                if (parameter(instructionPointer, 1) == 0) {
-                    instructionPointer = parameter(instructionPointer, 2);
+                if (readParameter(instructionPointer, 1) == 0) {
+                    instructionPointer = readParameter(instructionPointer, 2);
                 } else {
                     instructionPointer += 3;
                 }
             } else if (operator == 7) {
-                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) < parameter(instructionPointer, 2) ? 1L : 0L);
+                writeParameter(instructionPointer, 3, readParameter(instructionPointer, 1) < readParameter(instructionPointer, 2) ? 1L : 0L);
                 instructionPointer += 4;
             } else if (operator == 8) {
-                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) == parameter(instructionPointer, 2) ? 1L : 0L);
+                writeParameter(instructionPointer, 3, readParameter(instructionPointer, 1) == readParameter(instructionPointer, 2) ? 1L : 0L);
                 instructionPointer += 4;
             } else if (operator == 9) {
-                relativeBase.addAndGet(parameter(instructionPointer, 1));
+                relativeBase.addAndGet(readParameter(instructionPointer, 1));
                 instructionPointer += 2;
             } else if (operator == 99) {
                 break;
@@ -83,12 +83,20 @@ public class IntCodeProgramm {
         }
     }
 
-    private long parameter(long instructionPointer, int parameterOffset) {
+    private long readParameter(long instructionPointer, int parameterOffset) {
+        return readMemory(memoryAddress(instructionPointer, parameterOffset));
+    }
+
+    private void writeParameter(long instructionPointer, int parameterOffset, Long value) {
+        program.put(memoryAddress(instructionPointer, parameterOffset), value);
+    }
+
+    private long memoryAddress(long instructionPointer, int parameterOffset) {
         var parameterMode = (int) Math.floorDiv(readMemory(instructionPointer), tenPow(parameterOffset + 1)) % 10;
         return switch (parameterMode) {
-            case 0 -> readMemory(readMemory(instructionPointer + parameterOffset));
-            case 1 -> readMemory(instructionPointer + parameterOffset);
-            case 2 -> readMemory(relativeBase.get() + readMemory(instructionPointer + parameterOffset));
+            case 0 -> readMemory(instructionPointer + parameterOffset);
+            case 1 -> instructionPointer + parameterOffset;
+            case 2 -> relativeBase.get() + readMemory(instructionPointer + parameterOffset);
             default -> throw new IllegalStateException("Unexpected parameter mode: " + parameterMode);
         };
     }
