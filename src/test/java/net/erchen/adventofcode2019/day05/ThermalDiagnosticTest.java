@@ -21,17 +21,17 @@ class ThermalDiagnosticTest {
     void shouldRunDiagnosticProgramm() {
         var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
         var output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 1, output::add);
+        intCodeProgramm.execute(() -> 1L, output::add);
 
-        assertThat(output).containsExactly(0, 0, 0, 0, 0, 0, 0, 0, 0, 15314507);
+        assertThat(output).containsExactly(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 15314507L);
     }
 
     @Test
     void shouldRunDiagnosticProgrammForSystem5() {
         var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
         var output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 5, output::add);
+        intCodeProgramm.execute(() -> 5L, output::add);
 
-        assertThat(output).containsExactly(652726);
+        assertThat(output).containsExactly(652726L);
     }
 }

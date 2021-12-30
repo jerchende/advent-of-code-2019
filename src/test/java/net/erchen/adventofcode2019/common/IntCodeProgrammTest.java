@@ -34,9 +34,9 @@ class IntCodeProgrammTest {
     void shouldPassInputAndOutput() {
         var intCodeProgramm = IntCodeProgramm.fromInput("3,0,4,0,99");
 
-        List<Integer> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 42, output::add);
+        List<Long> output = new LinkedList<>();
+        intCodeProgramm.execute(() -> 42L, output::add);
 
-        assertThat(output).containsExactly(42);
+        assertThat(output).containsExactly(42L);
     }
 }

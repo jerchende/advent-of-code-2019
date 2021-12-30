@@ -19,19 +19,19 @@ public class AmplificationCircuit {
         this.amplifier = new IntCodeProgramm[] { IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input) };
     }
 
-    public int thrusterSignal(List<Integer> phases) {
+    public long thrusterSignal(List<Long> phases) {
         if (phases.size() != 5) {
             throw new IllegalArgumentException();
         }
 
         var inputs =
                 IntStream.range(0, 5).mapToObj(i -> {
-                    var queue = new LinkedTransferQueue<Integer>();
-                    queue.add(phases.get(i));
+                    var queue = new LinkedTransferQueue<Long>();
+                    queue.add((long) phases.get(i));
                     return queue;
                 }).toArray(BlockingQueue[]::new);
 
-        inputs[0].add(0);
+        inputs[0].add(0L);
 
         IntStream.range(0, 5).parallel().forEach(i ->
                 amplifier[i].execute(() -> pollFromQueueWithTimeout(inputs[i]), output -> inputs[i == 4 ? 0 : i + 1].add(output))
@@ -41,18 +41,18 @@ public class AmplificationCircuit {
     }
 
     @SneakyThrows
-    private Integer pollFromQueueWithTimeout(BlockingQueue<Integer> input) {
+    private long pollFromQueueWithTimeout(BlockingQueue<Long> input) {
         return input.poll(1, TimeUnit.SECONDS);
     }
 
-    public int maxThrusterSignal(boolean feedbackLoopMode) {
-        return permutations(feedbackLoopMode ? List.of(5, 6, 7, 8, 9) : List.of(0, 1, 2, 3, 4))
-                .mapToInt(this::thrusterSignal)
+    public long maxThrusterSignal(boolean feedbackLoopMode) {
+        return permutations(feedbackLoopMode ? List.of(5L, 6L, 7L, 8L, 9L) : List.of(0L, 1L, 2L, 3L, 4L))
+                .mapToLong(this::thrusterSignal)
                 .max()
                 .orElseThrow();
     }
 
-    static Stream<List<Integer>> permutations(List<Integer> input) {
+    static Stream<List<Long>> permutations(List<Long> input) {
         if (input.size() == 1) {
             return Stream.of(input);
         }

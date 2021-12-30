@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -15,50 +18,63 @@ import static java.util.stream.Collectors.joining;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class IntCodeProgramm {
 
-    private final int[] program;
+    private final Map<Long, Long> program;
+    private final AtomicLong relativeBase = new AtomicLong(0);
 
     public static IntCodeProgramm fromInput(String input) {
-        return new IntCodeProgramm(Arrays.stream(input.split(",")).mapToInt(Integer::parseInt).toArray());
+        AtomicLong lineCouter = new AtomicLong(0);
+        Map<Long, Long> program = new TreeMap<>();
+        Arrays.stream(input.split(",")).mapToLong(Long::parseLong).forEach(l -> program.put(lineCouter.getAndIncrement(), l));
+        return new IntCodeProgramm(program);
     }
 
     public String toString() {
-        return Arrays.stream(program).mapToObj(String::valueOf).collect(joining(","));
+        return program.values().stream().map(String::valueOf).collect(joining(","));
+    }
+
+    private long readMemory(long instructionPointer) {
+        return program.getOrDefault(instructionPointer, 0L);
     }
 
     @SneakyThrows
-    public void execute(Supplier<Integer> input, Consumer<Integer> output) {
-        for (int i = 0; i < program.length; ) {
-            var operator = program[i] % 100;
+    public void execute(Supplier<Long> input, Consumer<Long> output) {
+        relativeBase.set(0);
+        long instructionPointer = 0;
+        while (true) {
+            var operator = program.get(instructionPointer) % 100;
             if (operator == 1) {
-                program[program[i + 3]] = parameter(i, 1) + parameter(i, 2);
-                i += 4;
+                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) + parameter(instructionPointer, 2));
+                instructionPointer += 4;
             } else if (operator == 2) {
-                program[program[i + 3]] = parameter(i, 1) * parameter(i, 2);
-                i += 4;
+                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) * parameter(instructionPointer, 2));
+                instructionPointer += 4;
             } else if (operator == 3) {
-                program[program[i + 1]] = input.get();
-                i += 2;
+                program.put(program.get(instructionPointer + 1), input.get());
+                instructionPointer += 2;
             } else if (operator == 4) {
-                output.accept(parameter(i, 1));
-                i += 2;
+                output.accept(parameter(instructionPointer, 1));
+                instructionPointer += 2;
             } else if (operator == 5) {
-                if (parameter(i, 1) != 0) {
-                    i = parameter(i, 2);
+                if (parameter(instructionPointer, 1) != 0) {
+                    instructionPointer = parameter(instructionPointer, 2);
                 } else {
-                    i += 3;
+                    instructionPointer += 3;
                 }
             } else if (operator == 6) {
-                if (parameter(i, 1) == 0) {
-                    i = parameter(i, 2);
+                if (parameter(instructionPointer, 1) == 0) {
+                    instructionPointer = parameter(instructionPointer, 2);
                 } else {
-                    i += 3;
+                    instructionPointer += 3;
                 }
             } else if (operator == 7) {
-                program[program[i + 3]] = parameter(i, 1) < parameter(i, 2) ? 1 : 0;
-                i += 4;
+                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) < parameter(instructionPointer, 2) ? 1L : 0L);
+                instructionPointer += 4;
             } else if (operator == 8) {
-                program[program[i + 3]] = parameter(i, 1) == parameter(i, 2) ? 1 : 0;
-                i += 4;
+                program.put(program.get(instructionPointer + 3), parameter(instructionPointer, 1) == parameter(instructionPointer, 2) ? 1L : 0L);
+                instructionPointer += 4;
+            } else if (operator == 9) {
+                relativeBase.addAndGet(parameter(instructionPointer, 1));
+                instructionPointer += 2;
             } else if (operator == 99) {
                 break;
             } else {
@@ -67,16 +83,16 @@ public class IntCodeProgramm {
         }
     }
 
-    private int parameter(int instructionPointer, int parameterOffset) {
-        var immediateMode = (program[instructionPointer] % tenPow(parameterOffset + 2)) >= tenPow(parameterOffset + 1);
+    private long parameter(long instructionPointer, int parameterOffset) {
+        var immediateMode = (readMemory(instructionPointer) % tenPow(parameterOffset + 2)) >= tenPow(parameterOffset + 1);
         if (immediateMode) {
-            return program[instructionPointer + parameterOffset];
+            return readMemory(instructionPointer + parameterOffset);
         } else {
-            return program[program[instructionPointer + parameterOffset]];
+            return readMemory(readMemory(instructionPointer + parameterOffset));
         }
     }
 
-    private static int tenPow(int exponent) {
+    private static int tenPow(long exponent) {
         return (int) Math.pow(10, exponent);
     }
 
