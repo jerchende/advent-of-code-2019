@@ -6,6 +6,7 @@ import net.erchen.adventofcode2019.common.IntCodeProgramm;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
@@ -19,6 +20,7 @@ public class AmplificationCircuit {
         this.amplifier = new IntCodeProgramm[] { IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input), IntCodeProgramm.fromInput(input) };
     }
 
+    @SneakyThrows
     public long thrusterSignal(List<Long> phases) {
         if (phases.size() != 5) {
             throw new IllegalArgumentException();
@@ -33,16 +35,20 @@ public class AmplificationCircuit {
 
         inputs[0].add(0L);
 
-        IntStream.range(0, 5).parallel().forEach(i ->
-                amplifier[i].execute(() -> pollFromQueueWithTimeout(inputs[i]), output -> inputs[i == 4 ? 0 : i + 1].add(output))
-        );
+        var forkJoinPool = new ForkJoinPool(5);
+        forkJoinPool.submit(() ->
+                IntStream.range(0, 5).parallel().forEach(i ->
+                        amplifier[i].execute(() -> pollFromQueueWithTimeout(inputs[i]), output -> inputs[i == 4 ? 0 : i + 1].add(output))
+                )
+        ).get();
 
         return pollFromQueueWithTimeout(inputs[0]);
+
     }
 
     @SneakyThrows
     private long pollFromQueueWithTimeout(BlockingQueue<Long> input) {
-        return input.poll(1, TimeUnit.SECONDS);
+        return input.poll(2, TimeUnit.SECONDS);
     }
 
     public long maxThrusterSignal(boolean feedbackLoopMode) {
