@@ -68,7 +68,7 @@ public class MoonSimulator {
     }
 
     public long calculateCyclesUntilPositionsRepeat() {
-        return LongStream.of(calculateCyclesUntilPositionsRepeat(XYZ::x), calculateCyclesUntilPositionsRepeat(XYZ::y), calculateCyclesUntilPositionsRepeat(XYZ::z)).peek(System.out::println).reduce(MoonSimulator::lcm).orElseThrow();
+        return LongStream.of(calculateCyclesUntilPositionsRepeat(XYZ::x), calculateCyclesUntilPositionsRepeat(XYZ::y), calculateCyclesUntilPositionsRepeat(XYZ::z)).reduce(MoonSimulator::lcm).orElseThrow();
     }
 
     private int calculateCyclesUntilPositionsRepeat(ToIntFunction<XYZ> axisExtractor) {
