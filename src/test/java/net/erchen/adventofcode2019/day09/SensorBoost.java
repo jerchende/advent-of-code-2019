@@ -23,7 +23,7 @@ public class SensorBoost {
         var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
 
         List<Long> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 1L, output::add);
+        intCodeProgramm.executeLong(() -> 1L, output::add);
 
         assertThat(output).containsExactly(3546494377L);
     }
@@ -33,7 +33,7 @@ public class SensorBoost {
         var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
 
         List<Long> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 2L, output::add);
+        intCodeProgramm.executeLong(() -> 2L, output::add);
 
         assertThat(output).containsExactly(47253L);
     }

@@ -36,8 +36,12 @@ public class IntCodeProgramm {
         return program.getOrDefault(instructionPointer, 0L);
     }
 
+    public void execute(Supplier<Integer> input, Consumer<Integer> output) {
+        executeLong(() -> input.get().longValue(), o -> output.accept(o.intValue()));
+    }
+
     @SneakyThrows
-    public void execute(Supplier<Long> input, Consumer<Long> output) {
+    public void executeLong(Supplier<Long> input, Consumer<Long> output) {
         relativeBase.set(0);
         long instructionPointer = 0;
         while (true) {

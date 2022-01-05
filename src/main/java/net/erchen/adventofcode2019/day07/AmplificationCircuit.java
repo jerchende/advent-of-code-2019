@@ -21,19 +21,19 @@ public class AmplificationCircuit {
     }
 
     @SneakyThrows
-    public long thrusterSignal(List<Long> phases) {
+    public int thrusterSignal(List<Integer> phases) {
         if (phases.size() != 5) {
             throw new IllegalArgumentException();
         }
 
         var inputs =
                 IntStream.range(0, 5).mapToObj(i -> {
-                    var queue = new LinkedTransferQueue<Long>();
-                    queue.add((long) phases.get(i));
+                    var queue = new LinkedTransferQueue<Integer>();
+                    queue.add(phases.get(i));
                     return queue;
                 }).toArray(BlockingQueue[]::new);
 
-        inputs[0].add(0L);
+        inputs[0].add(0);
 
         var forkJoinPool = new ForkJoinPool(5);
         forkJoinPool.submit(() ->
@@ -47,18 +47,18 @@ public class AmplificationCircuit {
     }
 
     @SneakyThrows
-    private long pollFromQueueWithTimeout(BlockingQueue<Long> input) {
+    private int pollFromQueueWithTimeout(BlockingQueue<Integer> input) {
         return input.poll(2, TimeUnit.SECONDS);
     }
 
-    public long maxThrusterSignal(boolean feedbackLoopMode) {
-        return permutations(feedbackLoopMode ? List.of(5L, 6L, 7L, 8L, 9L) : List.of(0L, 1L, 2L, 3L, 4L))
-                .mapToLong(this::thrusterSignal)
+    public int maxThrusterSignal(boolean feedbackLoopMode) {
+        return permutations(feedbackLoopMode ? List.of(5, 6, 7, 8, 9) : List.of(0, 1, 2, 3, 4))
+                .mapToInt(this::thrusterSignal)
                 .max()
                 .orElseThrow();
     }
 
-    static Stream<List<Long>> permutations(List<Long> input) {
+    static <T> Stream<List<T>> permutations(List<T> input) {
         if (input.size() == 1) {
             return Stream.of(input);
         }

@@ -23,7 +23,7 @@ public class RegistrationIdentifier {
         var outputCounter = new AtomicInteger(0);
         whitePixel.add(position.getValue());
 
-        programm.execute(() -> whitePixel.contains(position.getValue()) ? 1L : 0L, o -> {
+        programm.executeLong(() -> whitePixel.contains(position.getValue()) ? 1L : 0L, o -> {
             if (outputCounter.getAndIncrement() % 2 == 0) {
                 if (o == 0L) {
                     whitePixel.remove(position.getValue());

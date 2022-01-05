@@ -34,20 +34,20 @@ class IntCodeProgrammTest {
     void shouldPassInputAndOutput() {
         var intCodeProgramm = IntCodeProgramm.fromInput("3,0,4,0,99");
 
-        List<Long> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> 42L, output::add);
+        List<Integer> output = new LinkedList<>();
+        intCodeProgramm.execute(() -> 42, output::add);
 
-        assertThat(output).containsExactly(42L);
+        assertThat(output).containsExactly(42);
     }
 
     @Test
     void shouldSupportParametersInRelativeModeA() {
         var intCodeProgramm = IntCodeProgramm.fromInput("109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99");
 
-        List<Long> output = new LinkedList<>();
+        List<Integer> output = new LinkedList<>();
         intCodeProgramm.execute(() -> null, output::add);
 
-        assertThat(output).containsExactly(109L, 1L, 204L, -1L, 1001L, 100L, 1L, 100L, 1008L, 100L, 16L, 101L, 1006L, 101L, 0L, 99L);
+        assertThat(output).containsExactly(109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99);
     }
 
     @Test
@@ -55,7 +55,7 @@ class IntCodeProgrammTest {
         var intCodeProgramm = IntCodeProgramm.fromInput("1102,34915192,34915192,7,4,7,99,0");
 
         List<Long> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> null, output::add);
+        intCodeProgramm.executeLong(() -> null, output::add);
 
         assertThat(output).containsExactly(1219070632396864L);
     }
@@ -65,7 +65,7 @@ class IntCodeProgrammTest {
         var intCodeProgramm = IntCodeProgramm.fromInput("104,1125899906842624,99");
 
         List<Long> output = new LinkedList<>();
-        intCodeProgramm.execute(() -> null, output::add);
+        intCodeProgramm.executeLong(() -> null, output::add);
 
         assertThat(output).containsExactly(1125899906842624L);
     }
