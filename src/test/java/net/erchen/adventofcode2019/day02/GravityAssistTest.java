@@ -19,12 +19,12 @@ class GravityAssistTest {
     @Test
     void shouldRestoreGravityAssistProgramm() {
         var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
-        intCodeProgramm.getProgram().put(1L, 12L);
-        intCodeProgramm.getProgram().put(2L, 2L);
+        intCodeProgramm.writeMemory(1, 12);
+        intCodeProgramm.writeMemory(2, 2);
 
         intCodeProgramm.execute(() -> null, x -> {
         });
-        assertThat(intCodeProgramm.getProgram().get(0L)).isEqualTo(6327510L);
+        assertThat(intCodeProgramm.readMemory(0)).isEqualTo(6327510L);
     }
 
     @Test
@@ -32,11 +32,11 @@ class GravityAssistTest {
         for (int noun = 0; noun <= 99; noun++) {
             for (int verb = 0; verb <= 99; verb++) {
                 var intCodeProgramm = IntCodeProgramm.fromInput(solutionInput());
-                intCodeProgramm.getProgram().put(1L, (long) noun);
-                intCodeProgramm.getProgram().put(2L, (long) verb);
+                intCodeProgramm.writeMemory(1, noun);
+                intCodeProgramm.writeMemory(2, verb);
                 intCodeProgramm.execute(() -> null, x -> {
                 });
-                if (intCodeProgramm.getProgram().get(0L) == 19690720L) {
+                if (intCodeProgramm.readMemory(0) == 19690720L) {
                     assertThat(noun).isEqualTo(41);
                     assertThat(verb).isEqualTo(12);
                     return;

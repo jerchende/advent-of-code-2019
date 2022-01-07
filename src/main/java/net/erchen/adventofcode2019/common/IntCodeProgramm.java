@@ -1,7 +1,6 @@
 package net.erchen.adventofcode2019.common;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -14,11 +13,10 @@ import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
 
-@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class IntCodeProgramm {
 
-    private final Map<Long, Long> program;
+    private final Map<Long, Long> memory;
     private final AtomicLong relativeBase = new AtomicLong(0);
 
     public static IntCodeProgramm fromInput(String input) {
@@ -29,11 +27,19 @@ public class IntCodeProgramm {
     }
 
     public String toString() {
-        return program.values().stream().map(String::valueOf).collect(joining(","));
+        return memory.values().stream().map(String::valueOf).collect(joining(","));
     }
 
-    private long readMemory(long instructionPointer) {
-        return program.getOrDefault(instructionPointer, 0L);
+    public void writeMemory(long address, long value) {
+        memory.put(address, value);
+    }
+
+    public Long readMemory(long address) {
+        return memory.getOrDefault(address, 0L);
+    }
+
+    public int readMemory(int address) {
+        return readMemory((long) address).intValue();
     }
 
     public void execute(Supplier<Integer> input, Consumer<Integer> output) {
@@ -45,7 +51,7 @@ public class IntCodeProgramm {
         relativeBase.set(0);
         long instructionPointer = 0;
         while (true) {
-            var operator = program.get(instructionPointer) % 100;
+            var operator = readMemory(instructionPointer) % 100;
             if (operator == 1) {
                 writeParameter(instructionPointer, 3, readParameter(instructionPointer, 1) + readParameter(instructionPointer, 2));
                 instructionPointer += 4;
@@ -92,7 +98,7 @@ public class IntCodeProgramm {
     }
 
     private void writeParameter(long instructionPointer, int parameterOffset, Long value) {
-        program.put(memoryAddress(instructionPointer, parameterOffset), value);
+        writeMemory(memoryAddress(instructionPointer, parameterOffset), value);
     }
 
     private long memoryAddress(long instructionPointer, int parameterOffset) {
