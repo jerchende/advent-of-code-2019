@@ -20,23 +20,21 @@ public class Nanofactory {
                 .toList();
     }
 
-    public long calculateOreConsumptionForFuel() {
+    public long calculateOreConsumptionForFuel(long fuelAmount) {
         long oreConsumption = 0L;
         Queue<ChemicalAmount> toProduce = new LinkedList<>();
-        Map<String, Integer> notConsumed = new HashMap<>();
+        Map<String, Long> notConsumed = new HashMap<>();
 
-        int fuelCounter = 0;
-
-        toProduce.add(new ChemicalAmount(1, "FUEL"));
+        toProduce.add(new ChemicalAmount(fuelAmount, "FUEL"));
 
         while (!toProduce.isEmpty()) {
             var todo = toProduce.poll();
             var reaction = reactionFor(todo.chemical);
-            var needed = todo.amount - Optional.ofNullable(notConsumed.remove(todo.chemical)).orElse(0);
+            var needed = todo.amount - Optional.ofNullable(notConsumed.remove(todo.chemical)).orElse(0L);
             var quantity = ceilDiv(needed, reaction.output.amount);
 
             for (ChemicalAmount input : reaction.input) {
-                log.info("Need {} {} for {} {}", input.amount * quantity, input.chemical, reaction.output.amount, todo.chemical);
+                //log.info("Need {} {} for {} {}", input.amount * quantity, input.chemical, reaction.output.amount, todo.chemical);
                 if (input.chemical.equals("ORE")) {
                     oreConsumption += (long) input.amount * quantity;
                 } else {
@@ -44,13 +42,19 @@ public class Nanofactory {
                 }
             }
 
-            notConsumed.merge(todo.chemical, reaction.output.amount * quantity - needed, Integer::sum);
+            notConsumed.merge(todo.chemical, reaction.output.amount * quantity - needed, Long::sum);
         }
 
         return oreConsumption;
     }
 
-    private static int ceilDiv(int a, int b) {
+    public long maximumFuelForOre(long ore) {
+        var min = ore / calculateOreConsumptionForFuel(1);
+
+        return (long) Math.floor(1.0 * ore * min / calculateOreConsumptionForFuel(min));
+    }
+
+    private static long ceilDiv(long a, long b) {
         return (a + b - 1) / b;
     }
 
@@ -61,7 +65,7 @@ public class Nanofactory {
     public static record Reaction(List<ChemicalAmount> input, ChemicalAmount output) {
     }
 
-    public static record ChemicalAmount(int amount, String chemical) {
+    public static record ChemicalAmount(long amount, String chemical) {
 
         public static ChemicalAmount fromInput(String input) {
             var split = input.split(" ");

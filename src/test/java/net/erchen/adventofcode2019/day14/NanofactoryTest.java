@@ -52,41 +52,69 @@ class NanofactoryTest {
     void shouldCalculateFuelConsumption_Sample1() {
         var nanofactory = new Nanofactory(sampleInput1());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(31);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(31);
     }
 
     @Test
     void shouldCalculateFuelConsumption_Sample2() {
         var nanofactory = new Nanofactory(sampleInput2());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(165);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(165);
     }
 
     @Test
     void shouldCalculateFuelConsumption_Sample3() {
         var nanofactory = new Nanofactory(sampleInput3());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(13312);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(13312);
     }
 
     @Test
     void shouldCalculateFuelConsumption_Sample4() {
         var nanofactory = new Nanofactory(sampleInput4());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(180697);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(180697);
     }
 
     @Test
     void shouldCalculateFuelConsumption_Sample5() {
         var nanofactory = new Nanofactory(sampleInput5());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(2210736);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(2210736);
     }
 
     @Test
     void shouldCalculateFuelConsumption_Solution() {
         var nanofactory = new Nanofactory(solutionInput());
 
-        assertThat(nanofactory.calculateOreConsumptionForFuel()).isEqualTo(532506);
+        assertThat(nanofactory.calculateOreConsumptionForFuel(1)).isEqualTo(532506);
+    }
+
+    @Test
+    void shouldCalculateMaximumFuelForOre_Sample3() {
+        var nanofactory = new Nanofactory(sampleInput3());
+
+        assertThat(nanofactory.maximumFuelForOre(1000000000000L)).isEqualTo(82892753L);
+    }
+
+    @Test
+    void shouldCalculateMaximumFuelForOre_Sample4() {
+        var nanofactory = new Nanofactory(sampleInput4());
+
+        assertThat(nanofactory.maximumFuelForOre(1000000000000L)).isEqualTo(5586022);
+    }
+
+    @Test
+    void shouldCalculateMaximumFuelForOre_Sample5() {
+        var nanofactory = new Nanofactory(sampleInput5());
+
+        assertThat(nanofactory.maximumFuelForOre(1000000000000L)).isEqualTo(460664);
+    }
+
+    @Test
+    void shouldCalculateMaximumFuelForOre_Solution() {
+        var nanofactory = new Nanofactory(solutionInput());
+
+        assertThat(nanofactory.maximumFuelForOre(1000000000000L)).isEqualTo(2595245);
     }
 }
