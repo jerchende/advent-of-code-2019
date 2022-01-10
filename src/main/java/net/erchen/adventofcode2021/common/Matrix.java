@@ -13,6 +13,9 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
+/**
+ * copy of my matrix implementation from 2021
+ */
 @Builder(access = AccessLevel.PACKAGE)
 public class Matrix<T> {
 
