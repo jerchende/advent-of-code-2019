@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.erchen.adventofcode2019.common.IntCodeProgramm;
-import net.erchen.adventofcode2021.common.Matrix;
+import net.erchen.codingpuzzlescommon.matrix.Matrix;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
